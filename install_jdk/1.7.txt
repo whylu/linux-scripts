@@ -1,0 +1,47 @@
+﻿###http://www.if-not-true-then-false.com/2010/install-sun-oracle-java-jdk-jre-7-on-fedora-centos-red-hat-rhel/
+
+wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/7u79-b15/jdk-7u79-linux-x64.tar.gz
+
+#rpm -Uvh 套件名稱
+#U是upgrade, 表示會把舊的軟體移除再安裝新的，所以不管有沒有安裝過都可以使用rpm -Uvh來安裝軟體
+rpm -Uvh jdk-7u71-linux-x64.rpm 
+
+
+#########設定使用1.7版本
+## java
+alternatives --install /usr/bin/java java /usr/java/jdk1.7.0_71/jre/bin/java 200000
+## javaws ##
+alternatives --install /usr/bin/javaws javaws /usr/java/jdk1.7.0_71/jre/bin/javaws 200000
+ 
+alternatives --install /usr/bin/javac javac /usr/java/jdk1.7.0_71/bin/javac 200000
+alternatives --install /usr/bin/jar jar /usr/java/jdk1.7.0_71/bin/jar 200000
+
+ 
+
+## Swap between OpenJDK and Sun/Oracle Java JDK/JRE 6 and 7 versions
+alternatives --config java
+
+alternatives --config javaws
+
+alternatives --config libjavaplugin.so
+
+#libjavaplugin.so.x86_64 (64-bit)
+alternatives --config libjavaplugin.so.x86_64
+
+alternatives --config javac
+
+
+##############
+#Add JAVA_HOME environment variable to /etc/profile file or $HOME/.bash_profile file
+#export JAVA_HOME JDK ##
+
+echo export JAVA_HOME="/usr/java/jdk1.7.0_71" >> /etc/profile
+
+
+
+
+
+
+
+
+

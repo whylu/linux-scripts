@@ -1,0 +1,21 @@
+cd /opt
+wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u101-b13/jdk-8u101-linux-x64.tar.gz
+
+tar -zxf jdk-8u101-linux-x64.tar.gz
+
+mkdir /usr/lib/jvm
+mv jdk1.8.0_101 /usr/lib/jvm
+
+update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/jdk1.8.0_101/bin/java" 2
+update-alternatives --install "/usr/bin/javac" "javac" "/usr/lib/jvm/jdk1.8.0_101/bin/javac" 2
+update-alternatives --install "/usr/bin/javaws" "javaws" "/usr/lib/jvm/jdk1.8.0_101/bin/javaws" 2
+chmod a+x /usr/bin/java
+chmod a+x /usr/bin/javac
+chmod a+x /usr/bin/javaws
+
+
+update-alternatives --config javac
+update-alternatives --config java
+
+java -version
+rm -f jdk-8u101-linux-x64.tar.gz

@@ -1,0 +1,18 @@
+## 
+yum install -y gcc make
+yum install -y kernel-devel
+
+curl http://download.virtualbox.org/virtualbox/rpm/rhel/virtualbox.repo -o /etc/yum.repos.d/virtualbox.repo 
+yum search VirtualBox
+# then 
+yum install -y VirtualBox-5.1.x86_64
+
+usermod -a -G vboxusers root
+
+
+
+## disable /etc/yum.repos.d/virtualbox.repo  
+vi /etc/yum.repos.d/virtualbox.repo  
+#change to 
+#enabled=0
+

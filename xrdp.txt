@@ -1,0 +1,103 @@
+## [optional]
+# yum update
+
+
+## set xrdp repo
+tee /etc/yum.repos.d/xrdp.repo  <<-'EOF'
+[xrdp]
+name=xrdp
+baseurl=http://li.nux.ro/download/nux/dextop/el7/x86_64/
+enabled=1
+gpgcheck=0
+EOF
+
+
+#
+yum -y install xrdp tigervnc-server
+
+
+## add vnc user 'root' on :1
+tee /etc/systemd/system/vncserver-root@:1.service <<-'EOF'
+[Unit]
+Description=Remote desktop service (VNC)
+After=syslog.target network.target
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+#for root
+Type=forking
+# Clean any existing files in /tmp/.X11-unix environment
+ExecStartPre=/bin/sh -c '/usr/bin/vncserver -kill %i > /dev/null 2>&1 || :'
+ExecStart=/sbin/runuser -l root -c "/usr/bin/vncserver %i -geometry 1680x800"
+PIDFile=/root/.vnc/%H%i.pid
+ExecStop=/bin/sh -c '/usr/bin/vncserver -kill %i > /dev/null 2>&1 || :'
+EOF
+###------------end 
+
+
+# set vnc password
+vncpasswd
+
+## start vnc service 
+systemctl daemon-reload
+systemctl start vncserver-root@:1.service
+systemctl enable vncserver-root@:1.service
+## check 
+ss -anp | grep 5901
+
+
+## 
+#設定xrdp[編輯]
+#vi /etc/xrdp/xrdp.ini 刪除[xrdp1]部份, 新增以下
+[xrdp2]
+name=root
+lib=libvnc.so
+username=root
+password=ask
+ip=127.0.0.1
+#此ip與:1.service的1對應, 1=5901, 2=5902, ...
+port=5901
+
+
+
+# start xrdp service
+systemctl start xrdp.service
+systemctl enable xrdp.service
+# check 
+ss -anp | grep 3389
+
+
+
+## install desktop
+yum groupinstall -y "X Window System"
+yum install -y gnome-classic-session gnome-terminal nautilus-open-terminal control-center liberation-mono-fonts
+unlink /etc/systemd/system/default.target
+ln -sf /lib/systemd/system/graphical.target /etc/systemd/system/default.target
+
+
+## disabled xrdp repo
+vi /etc/yum.repos.d/xrdp.repo
+#change to 
+#enabled=0
+
+
+#firewall
+firewall-cmd --permanent --zone=public --add-port=3389/tcp
+firewall-cmd --reload
+
+
+
+### must restart!!! #######
+#init 6
+
+## now you can connect to xrdp
+
+
+
+#
+chcon --type=bin_t /usr/sbin/xrdp
+chcon --type=bin_t /usr/sbin/xrdp-sesman
+
+
